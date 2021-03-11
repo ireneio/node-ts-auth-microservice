@@ -1,19 +1,17 @@
 import { Request, Response } from 'express'
 import HttpResponse from '../utils/http'
-// import { decodeJWT } from '../utils/jwt'
+import { decodeJWT } from '../utils/jwt'
+import packagejson from '../package.json'
 
 function authenticate(token: string): boolean {
-  // TODO: implement
-
-  // console.log(decodeJWT(token, 'qapi'))
-  // return decodeJWT(token, 'qapi')
-  return true
+  return decodeJWT(token, packagejson.name)
 }
 
 export default function authMiddleware(req: Request, res: Response, next: Function): void {
   try {
-    const token: string | undefined = req.headers.authorization
-    if(token) {
+    const h: string | undefined = req.headers.authorization
+    if(h && h.split(' ')[0] === 'Bearer') {
+      const token = h.split(' ')[1]
       const authenticateTokenResult: boolean = authenticate(token)
       if(authenticateTokenResult === true) {
         next()

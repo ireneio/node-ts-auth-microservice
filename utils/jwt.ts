@@ -1,8 +1,11 @@
 import jwt, { JsonWebTokenError, NotBeforeError, TokenExpiredError } from 'jsonwebtoken'
+import packagejson from '../package.json'
 
-const audience: string = 'student-questionnaire-api-node'
+const audience: string = packagejson.name + packagejson.version
 
-export default async function createJWT(iss: string = 'qapi', kid: string = 'qapi-refresh', filepath?: string): Promise<string | undefined> {
+const secret = 'secret'
+
+export default async function createJWT(iss: string = packagejson.name, kid: string = `${packagejson.name}-refresh`, filepath?: string): Promise<string | undefined> {
   const payload = {
     iss,
     // <= 1 hour
@@ -12,14 +15,14 @@ export default async function createJWT(iss: string = 'qapi', kid: string = 'qap
   }
 
   // return Promise.resolve(jwt.sign(payload, privateKey, { keyid: kid, algorithm: 'HS256' }))
-  return Promise.resolve(jwt.sign(payload, 'secret', { keyid: kid, algorithm: 'HS256' }))
+  return Promise.resolve(jwt.sign(payload, secret, { keyid: kid, algorithm: 'HS256' }))
 }
 
 export function decodeJWT(token: string, issuer: string): boolean {
   let err = null
   let decoded
   try {
-    decoded = jwt.verify(token, 'secret', { audience, issuer, algorithms: ['HS256'] })
+    decoded = jwt.verify(token, secret, { audience, issuer, algorithms: ['HS256'] })
   } catch(e) {
     err = e
   } finally {
@@ -35,3 +38,7 @@ export function decodeJWT(token: string, issuer: string): boolean {
     return verify(err, decoded)
   }
 }
+
+const token = await createJWT()
+console.log(token)
+console.log('JWT test:', decodeJWT(token || '', packagejson.name))

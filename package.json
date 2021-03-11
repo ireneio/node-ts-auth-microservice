@@ -1,5 +1,5 @@
 {
-  "name": "node-server-es5-webpack-template",
+  "name": "node-ts-auth-microservice",
   "version": "1.0.0",
   "private": true,
   "scripts": {
