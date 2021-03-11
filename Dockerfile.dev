@@ -6,10 +6,6 @@ COPY . .
 
 ENV NODE_ENV=production
 ENV NODE_APP_CORS_URL=http://localhost:3000
-ENV NODE_APP_DB_USERNAME=1
-ENV NODE_APP_DB_PW=2
-ENV NODE_APP_DB_SERVER=3
-ENV NODE_APP_DB_DB=4
 ENV PG_CONNSTR=postgres://agjjremw:vwSHOh00HFUE3X0Oi03BQUZQT1x7dRxt@satao.db.elephantsql.com:5432/agjjremw
 
 RUN npm install --production && npm run build:prod

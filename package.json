@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "babel-node ./dist/app.bundle.js",
-    "dev": "cross-env PG_CONNSTR=postgres://agjjremw:vwSHOh00HFUE3X0Oi03BQUZQT1x7dRxt@satao.db.elephantsql.com:5432/agjjremw NODE_APP_DB_USERNAME=1 NODE_APP_DB_PW=2 NODE_APP_DB_SERVER=3 NODE_APP_DB_DB=4 NODE_APP_CORS_URL=http://localhost:3000 nodemon --exec babel-node ./dist/app.bundle.js",
+    "dev": "cross-env PG_CONNSTR=postgres://agjjremw:vwSHOh00HFUE3X0Oi03BQUZQT1x7dRxt@satao.db.elephantsql.com:5432/agjjremw NODE_APP_CORS_URL=http://localhost:3000 nodemon --exec babel-node ./dist/app.bundle.js",
     "build:dev": "webpack-cli --config webpack.config.cjs -w --progress --color",
     "build:prod": "webpack --config webpack.config.cjs --progress --color",
     "docker:dev": "bash ./docker-build-run.sh",
