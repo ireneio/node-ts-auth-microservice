@@ -4,16 +4,21 @@ import bcrypt from 'bcrypt'
 import { isRowsExist, genDateNow } from '../utils/helpers'
 import { SqlSchema } from '../../types/sql'
 
-export async function createUser(email: string, password: string, accessToken: string, refreshToken: string): Promise<Array<SqlSchema.UserInput> | false> {
+export async function createUser(email: string, password: string, accessToken: string, refreshToken: string, provider: string, accessLevel?: string): Promise<Array<SqlSchema.UserInput> | false> {
   const sql = `
-    INSERT INTO cmsUsers(email, password, access_token, refresh_token)
-    VALUES($1, $2, $3, $4)
+    INSERT INTO member(email, password, access_token, refresh_token, provider, access_level)
+    VALUES($1, $2, $3, $4, $5, $6)
     RETURNING *
   `
 
+  let perm = accessLevel
+  if(!accessLevel || provider !== 'local') {
+    perm = '1'
+  }
+
   try {
     const hashedPassword: string = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
-    const { rows } = await client.query(sql, [email, hashedPassword, accessToken, refreshToken])
+    const { rows } = await client.query(sql, [email, hashedPassword, accessToken, refreshToken, provider, perm])
     if(isRowsExist(rows) && rows) {
       console.log('[DB] createUser Success: ')
       console.log(rows)
@@ -30,7 +35,7 @@ export async function createUser(email: string, password: string, accessToken: s
 export async function getUserAll(): Promise<Array<SqlSchema.UserInput> | false> {
   const sql = `
     SELECT id, email, last_login
-    FROM cmsUsers
+    FROM member
   `
 
   try {
@@ -50,8 +55,8 @@ export async function getUserAll(): Promise<Array<SqlSchema.UserInput> | false> 
 
 export async function getUser(email: string): Promise<Array<SqlSchema.UserInput> | false> {
   const sql = `
-    SELECT id, email, password, access_token, refresh_token, last_login
-    FROM cmsUsers
+    SELECT id, email, password, access_token, refresh_token, last_login, provider
+    FROM member
     WHERE email = $1
   `
 
@@ -73,7 +78,7 @@ export async function getUser(email: string): Promise<Array<SqlSchema.UserInput>
 export async function getAndVerifyUser(email: string, password: string): Promise<Array<SqlSchema.UserInput> | false> {
   const sql = `
     SELECT id, email, password, access_token, refresh_token, last_login
-    FROM cmsUsers
+    FROM member
     WHERE email = $1
   `
   // TODO: verify password
@@ -104,7 +109,7 @@ export async function updateUser(id: number, flag: string, value: string): Promi
     let res: boolean | SqlSchema.UserInput[] = false
     if(flag === 'password') {
       sql = `
-        UPDATE cmsUsers
+        UPDATE member
         SET password = $2, last_updated = $3
         WHERE id = $1
         RETURNING *
@@ -114,7 +119,7 @@ export async function updateUser(id: number, flag: string, value: string): Promi
       res = rows
     } else if(flag === 'email') {
       sql = `
-        UPDATE cmsUsers
+        UPDATE member
         SET email = $2, last_updated = $3
         WHERE id = $1
         RETURNING *

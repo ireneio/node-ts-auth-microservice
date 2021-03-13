@@ -40,5 +40,5 @@ export function decodeJWT(token: string, issuer: string): boolean {
 }
 
 const token = await createJWT()
-console.log(token)
-console.log('JWT test:', decodeJWT(token || '', packagejson.name))
+// console.log(token)
+console.log('[JWT] Test:', decodeJWT(token || '', packagejson.name) ? 'Success' : 'Failed')

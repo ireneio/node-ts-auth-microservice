@@ -12,6 +12,11 @@ import userRouter from './routes/user'
 
 import initLocalPg from './db/local'
 
+// Firebase SDK
+import initFirebase from './utils/firebase/admin'
+
+initFirebase
+
 // connect db
 await initLocalPg()
 
@@ -41,3 +46,11 @@ app.use('*', function(req: Request, res: Response, next: Function): void {
 })
 
 export default app
+
+// import { decrypt, encrpyt } from './utils/rsa'
+
+// console.log(encrpyt('../public-key.pem', '../private-key.pem'))
+// const encrypted = encrpyt('../public-key.pem', '../private-key.pem')
+// const decrypted = decrypt(encrypted)
+
+// console.log(decrypted)

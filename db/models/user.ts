@@ -2,15 +2,21 @@ import { client } from '../local'
 
 export async function createUserTable(): Promise<void | false> {
   const sql: string = `
-    CREATE TABLE IF NOT EXISTS cmsUsers (
+    CREATE TABLE IF NOT EXISTS member (
       id serial PRIMARY KEY,
+      provider text NOT NULL,
+      username text NOT NULL,
       email text NOT NULL,
       password text NOT NULL,
+      access_level text NOT NULL DEFAULT '1',
       access_token text NOT NULL,
       refresh_token text NOT NULL,
-      created_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      last_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      CONSTRAINT fk_access_level
+        FOREIGN KEY(access_level)
+          REFERENCES access_level(id)
     );
   `
 
@@ -25,7 +31,7 @@ export async function createUserTable(): Promise<void | false> {
 
 export async function dropUserTable(): Promise<void | false> {
   const sql: string = `
-    DROP TABLE cmsUsers
+    DROP TABLE member
   `
 
   try {

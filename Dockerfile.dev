@@ -5,8 +5,9 @@ WORKDIR /usr/src/node-api
 COPY . .
 
 ENV NODE_ENV=production
-ENV NODE_APP_CORS_URL=http://localhost:3000
-ENV PG_CONNSTR=postgres://agjjremw:vwSHOh00HFUE3X0Oi03BQUZQT1x7dRxt@satao.db.elephantsql.com:5432/agjjremw
+# ENV NODE_APP_CORS_URL=http://localhost:3000
+# ENV PG_CONNSTR=postgres://agjjremw:vwSHOh00HFUE3X0Oi03BQUZQT1x7dRxt@satao.db.elephantsql.com:5432/agjjremw
+ENV NODE_APP_ENABLE_CUSTOM_USERNAME=true
 
 RUN npm install --production && npm run build:prod
 
