@@ -131,13 +131,14 @@ router.post('/firebase/verify', async function(req: Request, res: Response, next
             throw new Error('Unauthorized')
           }
         }
+      } else {
+        throw new Error('Credential Error')
       }
     } else {
       throw new Error('Unauthorized')
     }
   } catch(e) {
-    console.log(e.message)
-    res.send(new HttpResponse(403, e.message))
+    res.send(new HttpResponse(e.message === 'Credential Error' ? 400 : 403, e.message))
   }
 })
 
@@ -148,13 +149,21 @@ router.post('/firebase', async function(req: Request, res: Response, next: Funct
 
     const authenticateTokenResult: { email: string, name: string, user_id: string, iat: number, sign_in_provider: string } = await Firebase.authenticateToken(token)
 
-    const createUserResult: false | SqlSchema.UserInput[] = await createUser(authenticateTokenResult.email, '', '', '', authenticateTokenResult.sign_in_provider, '1')
-
-    if(createUserResult === false) {
-      throw new Error('credentials error')
+    // check if user exists
+    const getUserResult: false | SqlSchema.UserInput[] = await getUser(authenticateTokenResult.email)
+    if(getUserResult) {
+      res.send(new HttpResponse(200, 'success: User Already Exists.', { t: token }))
     } else {
-      res.send(new HttpResponse(200, 'success', { t: token }))
+      const createUserResult: false | SqlSchema.UserInput[] = await createUser(authenticateTokenResult.email, '', '', '', authenticateTokenResult.sign_in_provider, '2')
+
+      if(createUserResult === false) {
+        throw new Error('credentials error')
+      } else {
+        res.send(new HttpResponse(200, 'success', { t: token }))
+      }
     }
+
+
   } catch(e) {
     res.send(new HttpResponse(400, e.message))
   }

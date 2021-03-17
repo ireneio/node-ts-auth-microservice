@@ -4,10 +4,10 @@ import { createUserTable, dropUserTable } from "../models/user";
 
 
 await init()
-await dropUserTable()
+// await dropUserTable()
 // await createAccessLevelTable()
 // await defineAccessLevel()
-await createUserTable()
+// await createUserTable()
 
 
 process.exit(0)
